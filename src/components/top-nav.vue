@@ -13,27 +13,6 @@
       </template>
       <span>Change theme</span>
     </v-tooltip>
-    <v-btn
-      v-if="!ismobile"
-      text
-      small
-      rounded
-      @click="gotoPage('https://gmail.com')"
-    >
-      Gmail
-    </v-btn>
-    <v-btn
-      v-if="!ismobile"
-      @click="gotoPage('https://images.google.com')"
-      text
-      small
-      rounded
-    >
-      Images
-    </v-btn>
-    <v-btn v-if="!ismobile" text small rounded>
-      <v-icon> mdi-apps </v-icon>
-    </v-btn>
     <v-btn icon>
       <v-avatar color="red" size="35">
         <span class="white--text headline">S</span>
