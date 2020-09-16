@@ -1,19 +1,42 @@
 <template>
-  <v-app-bar app flat light>
-    <v-app-bar-nav-icon />
-    <v-toolbar-title>Google Mock</v-toolbar-title>
+  <v-app-bar app flat dense collapse-on-scroll>
+    <v-app-bar-nav-icon v-if="ismobile" />
     <v-spacer />
-    <v-btn icon rounded>
+    <v-btn v-if="!ismobile" icon rounded small>
       <v-icon> mdi-github </v-icon>
     </v-btn>
-    <v-btn text small rounded> Gmail </v-btn>
-    <v-btn text small rounded> Images </v-btn>
-    <v-btn text small rounded>
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn icon rounded @click="changeTheme()" v-on="on" v-bind="attrs">
+          <v-icon>mdi-water</v-icon>
+        </v-btn>
+      </template>
+      <span>Change theme</span>
+    </v-tooltip>
+    <v-btn
+      v-if="!ismobile"
+      text
+      small
+      rounded
+      @click="gotoPage('https://gmail.com')"
+    >
+      Gmail
+    </v-btn>
+    <v-btn
+      v-if="!ismobile"
+      @click="gotoPage('https://images.google.com')"
+      text
+      small
+      rounded
+    >
+      Images
+    </v-btn>
+    <v-btn v-if="!ismobile" text small rounded>
       <v-icon> mdi-apps </v-icon>
     </v-btn>
     <v-btn icon>
-      <v-avatar color="red" size="40">
-        <span class="white--text headline">CJ</span>
+      <v-avatar color="red" size="35">
+        <span class="white--text headline">S</span>
       </v-avatar>
     </v-btn>
   </v-app-bar>
@@ -22,6 +45,25 @@
 export default {
   data: function () {
     return {}
+  },
+  methods: {
+    changeTheme() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+    },
+    gotoPage(url) {
+      window.open(url)
+      return
+    },
+  },
+  computed: {
+    ismobile() {
+      var width = window.innerWidth > 0 ? window.innerWidth : screen.width
+      if (width > 966) {
+        return false
+      } else {
+        return true
+      }
+    },
   },
 }
 </script>
