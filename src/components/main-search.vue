@@ -47,7 +47,22 @@
                     v-model="searchMod"
                     :success="searchValidation(searchMod)"
                     :clearable="true"
-                    @keyup.enter="searchQ(searchMod)"
+                    @keyup.enter="
+                      searchQ(
+                        searchMod,
+                        mustInc,
+                        mustExc,
+                        itSelec,
+                        curQFilt,
+                        curSearchLim,
+                        res,
+                        fileExt,
+                        mustUrl,
+                        safeSearch,
+                        adTest,
+                        persTest,
+                      )
+                    "
                     @click:append="assisDiag = !assisDiag"
                     hint="Try Entering a Query and Maybe Results will Come"
                     placeholder="Enter Your Query"
@@ -73,15 +88,67 @@
                     </v-card>
                   </v-dialog>
                 </div>
-                <div class="column is-full">
-                  <v-sheet elevation="9" shaped class="px-2">
-                    <div
-                      class="columns is-multiline is-mobile is-centered is-vcentered"
-                    >
+              </div>
+            </v-expand-transition>
+          </div>
+          <v-expand-transition>
+            <div class="column is-full mx-0 px-0">
+              <v-skeleton-loader
+                v-if="!showSearchBar"
+                class="mx-auto"
+                type="card"
+              ></v-skeleton-loader>
+              <v-expansion-panels v-if="showSearchBar" popout>
+                <v-expansion-panel>
+                  <v-expansion-panel-header>
+                    Filter Down Your Search
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <div class="columns is-multiline is-centered is-vcentered">
+                      <div class="column is-half">
+                        <v-combobox
+                          v-model="itSelec"
+                          small-chips
+                          prepend-inner-icon="mdi-book-plus-multiple"
+                          label="Filter Using Multiple 'OR' Keywords"
+                          :persistent-hint="true"
+                          hint="Press TAB or ENTER after Typing Each Filter for Seperating"
+                          multiple
+                          rounded
+                          dense
+                          outlined
+                        ></v-combobox>
+                      </div>
+                      <div class="column is-half">
+                        <v-select
+                          v-model="curSearchLim"
+                          :items="searchLims"
+                          item-text="display"
+                          item-value="value"
+                          prepend-inner-icon="mdi-clock"
+                          menu-props="auto"
+                          outlined
+                          rounded
+                          dense
+                          :persistent-hint="true"
+                          hint="Filter Based on Time Limit like past day or Month"
+                          label="Time Limit of Results"
+                          single-line
+                        ></v-select>
+                      </div>
                       <div class="column is-full">
-                        <p class="text has-text-centered">
-                          Filter Down Your Search
-                        </p>
+                        <v-radio-group
+                          v-model="curQFilt"
+                          label="Search the Keywords in"
+                          row
+                        >
+                          <v-radio
+                            v-for="(filt, index) in qFilters"
+                            :key="index"
+                            :label="filt.display"
+                            :value="filt.value"
+                          ></v-radio>
+                        </v-radio-group>
                       </div>
                       <div class="column is-half">
                         <v-text-field
@@ -90,6 +157,7 @@
                           :persistent-hint="true"
                           rounded
                           elevation="6"
+                          v-model="mustInc"
                           hint="Terms That Should be Definetely there in the Same Order in the Results"
                           label="Must Include Terms"
                         ></v-text-field>
@@ -101,13 +169,14 @@
                           rounded
                           :persistent-hint="true"
                           elevation="6"
+                          v-model="mustExc"
                           hint="Words That Should Not be there in the Results"
                           label="Must Exclude Terms"
                         ></v-text-field>
                       </div>
-                      <div class="column is-full">
+                      <div class="column is-half">
                         <v-slider
-                          v-model="slider"
+                          v-model="res"
                           class="align-center"
                           :max="100"
                           :min="10"
@@ -116,7 +185,7 @@
                         >
                           <template v-slot:append>
                             <v-text-field
-                              v-model="slider"
+                              v-model="res"
                               class="mt-0 pt-0"
                               hide-details
                               single-line
@@ -132,6 +201,7 @@
                           rounded
                           :persistent-hint="true"
                           elevation="6"
+                          v-model="fileExt"
                           hint="Filter Your Results Based on File Extensions"
                           label="File Extension"
                         ></v-text-field>
@@ -143,24 +213,73 @@
                           rounded
                           :persistent-hint="true"
                           elevation="6"
+                          v-model="mustUrl"
                           hint="Filter Your Results Based on a Particular Website"
                           label="Filter Websites"
                         ></v-text-field>
                       </div>
+                      <div class="column is-quarter">
+                        <v-switch
+                          v-model="safeSearch"
+                          hint="Turn On/Off Safe Search"
+                          :label="'SafeSearch ' + (safeSearch ? 'On' : 'Off')"
+                        ></v-switch>
+                      </div>
+                      <div class="column is-quarter">
+                        <v-switch
+                          v-model="adTest"
+                          hint="Turn On/Off Adwords Test"
+                          :label="'Ad-Test ' + (adTest ? 'On' : 'Off')"
+                        ></v-switch>
+                      </div>
+                      <div class="column is-quarter">
+                        <v-switch
+                          v-model="persTest"
+                          hint="Turn On/Off Personalised Search"
+                          :label="
+                            'Personalised Search ' + (persTest ? 'On' : 'Off')
+                          "
+                        ></v-switch>
+                      </div>
                     </div>
-                  </v-sheet>
-                </div>
-                <div class="column is-full">
-                  <div class="columns is-mobile is-centered is-vcentered">
-                    <div class="column has-text-centered is-full">
-                      <v-btn @click="searchQ(searchMod)">
-                        Advanced Search
-                      </v-btn>
-                    </div>
-                  </div>
-                </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+          </v-expand-transition>
+          <div class="column is-full">
+            <v-skeleton-loader
+              v-if="!showSearchBar"
+              class="has-text-centered"
+              type="button"
+            ></v-skeleton-loader>
+            <div
+              v-if="showSearchBar"
+              class="columns is-mobile is-centered is-vcentered"
+            >
+              <div class="column has-text-centered is-full">
+                <v-btn
+                  @click="
+                    searchQ(
+                      searchMod,
+                      mustInc,
+                      mustExc,
+                      itSelec,
+                      curQFilt,
+                      curSearchLim,
+                      res,
+                      fileExt,
+                      mustUrl,
+                      safeSearch,
+                      adTest,
+                      persTest,
+                    )
+                  "
+                >
+                  Advanced Search
+                </v-btn>
               </div>
-            </v-expand-transition>
+            </div>
           </div>
         </div>
       </div>
@@ -176,7 +295,62 @@ export default {
       searchMod: '',
       showSearchBar: false,
       assisDiag: false,
+      mustInc: '',
+      mustExc: '',
+      mustUrl: '',
+      fileExt: '',
+      searchLims: [
+        {
+          display: 'Past Day',
+          value: 'd',
+        },
+        {
+          display: 'Past Week',
+          value: 'w',
+        },
+        {
+          display: 'Past Month',
+          value: 'm',
+        },
+        {
+          display: 'Past Year',
+          value: 'y',
+        },
+        {
+          display: 'None',
+          value: ' ',
+        },
+      ],
+      curSearchLim: '',
+      itSelec: [],
+      qFilters: [
+        {
+          display: 'Title',
+          value: 'title',
+        },
+        {
+          display: 'Body',
+          value: 'body',
+        },
+        {
+          display: 'Links',
+          value: 'links',
+        },
+        {
+          display: 'Defintions',
+          value: 'definition',
+        },
+        {
+          display: 'Synonyms',
+          value: 'synonyms',
+        },
+      ],
+      curQFilt: '',
+      safeSearch: false,
+      persTest: false,
+      res: 10,
       snackbar: true,
+      adTest: false,
       searchValidation: function (text) {
         if (text.length > 0) {
           return true
@@ -187,10 +361,48 @@ export default {
     }
   },
   methods: {
-    searchQ(sq) {
+    searchQ(
+      sq,
+      must,
+      exc,
+      orsFilt,
+      qfilters,
+      range,
+      num,
+      ext,
+      sites,
+      safety,
+      adst,
+      personal,
+    ) {
       if (sq.length > 0) {
         let query = sq.replace(' ', '+')
-        let queryUrl = `http://www.google.com/search?q=${query}`
+        let qwithFilt = ''
+        if (qfilters == 'title') {
+          qwithFilt = 'allintitle%3A' + query
+        } else if (qfilters == 'body') {
+          qwithFilt = 'allintext%3A' + query
+        } else if (qfilters == 'links') {
+          qwithFilt = 'allinurl%3A' + query
+        } else if (qfilters == 'definition') {
+          qwithFilt = 'define%3A' + query
+        } else if (qfilters == 'synonyms') {
+          qwithFilt = query + '+~term'
+        } else {
+          qwithFilt = query
+        }
+        console.log(qwithFilt)
+        let mustInclude = must.replace(' ', '+')
+        let mustExclude = exc.replace(' ', '-')
+        let orFilters = orsFilt.join('+')
+        let numberRes = num < 10 ? 10 : num > 100 ? 100 : num
+        let fileExtension = ext
+        let siteSearch = sites
+        let sRange = range
+        let safeSearching = safety ? 'active' : 'images'
+        let adsTest = adst ? 'on' : 'off'
+        let personalisedSearch = personal ? 1 : 0
+        let queryUrl = `http://www.google.com/search?q=${qwithFilt}&as_epq=${mustInclude}&as_eq=${mustExclude}&as_oq=${orFilters}&num=${numberRes}&as_qdr=${sRange}&as_filetype=${fileExtension}&as_sitesearch=${siteSearch}&safe=${safeSearching}&pws=${personalisedSearch}&adtest=${adsTest}`
         window.open(queryUrl)
         return
       }

@@ -1,6 +1,9 @@
 <template>
   <v-app-bar app flat dense collapse-on-scroll>
     <v-app-bar-nav-icon v-if="ismobile" />
+    <v-toolbar-title v-if="!ismobile"
+      >Advanced Google Search Tool</v-toolbar-title
+    >
     <v-spacer />
     <v-btn v-if="!ismobile" icon rounded small>
       <v-icon> mdi-github </v-icon>
