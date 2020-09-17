@@ -353,12 +353,12 @@ export default {
       adTest: false,
       searchValidation: function (text) {
         if (text.length > 0) {
-          return true
+          return true;
         } else {
-          return false
+          return false;
         }
       },
-    }
+    };
   },
   methods: {
     searchQ(
@@ -376,59 +376,59 @@ export default {
       personal,
     ) {
       if (sq.length > 0) {
-        let query = sq.replace(' ', '+')
-        let qwithFilt = ''
+        let query = sq.replace(' ', '+');
+        let qwithFilt = '';
         if (qfilters == 'title') {
-          qwithFilt = 'allintitle%3A' + query
+          qwithFilt = 'allintitle%3A' + query;
         } else if (qfilters == 'body') {
-          qwithFilt = 'allintext%3A' + query
+          qwithFilt = 'allintext%3A' + query;
         } else if (qfilters == 'links') {
-          qwithFilt = 'allinurl%3A' + query
+          qwithFilt = 'allinurl%3A' + query;
         } else if (qfilters == 'definition') {
-          qwithFilt = 'define%3A' + query
+          qwithFilt = 'define%3A' + query;
         } else if (qfilters == 'synonyms') {
-          qwithFilt = query + '+~term'
+          qwithFilt = query + '+~term';
         } else {
-          qwithFilt = query
+          qwithFilt = query;
         }
-        console.log(qwithFilt)
-        let mustInclude = must.replace(' ', '+')
-        let mustExclude = exc.replace(' ', '-')
-        let orFilters = orsFilt.join('+')
-        let numberRes = num < 10 ? 10 : num > 100 ? 100 : num
-        let fileExtension = ext
-        let siteSearch = sites
-        let sRange = range
-        let safeSearching = safety ? 'active' : 'images'
-        let adsTest = adst ? 'on' : 'off'
-        let personalisedSearch = personal ? 1 : 0
-        let queryUrl = `http://www.google.com/search?q=${qwithFilt}&as_epq=${mustInclude}&as_eq=${mustExclude}&as_oq=${orFilters}&num=${numberRes}&as_qdr=${sRange}&as_filetype=${fileExtension}&as_sitesearch=${siteSearch}&safe=${safeSearching}&pws=${personalisedSearch}&adtest=${adsTest}`
-        window.open(queryUrl)
-        return
+        console.log(qwithFilt);
+        let mustInclude = must.replace(' ', '+');
+        let mustExclude = exc.replace(' ', '-');
+        let orFilters = orsFilt.join('+');
+        let numberRes = num < 10 ? 10 : num > 100 ? 100 : num;
+        let fileExtension = ext;
+        let siteSearch = sites;
+        let sRange = range;
+        let safeSearching = safety ? 'active' : 'images';
+        let adsTest = adst ? 'on' : 'off';
+        let personalisedSearch = personal ? 1 : 0;
+        let queryUrl = `http://www.google.com/search?q=${qwithFilt}&as_epq=${mustInclude}&as_eq=${mustExclude}&as_oq=${orFilters}&num=${numberRes}&as_qdr=${sRange}&as_filetype=${fileExtension}&as_sitesearch=${siteSearch}&safe=${safeSearching}&pws=${personalisedSearch}&adtest=${adsTest}`;
+        window.open(queryUrl);
+        return;
       }
     },
     luckyButton() {
-      window.open('https://www.google.com/doodles/')
-      return
+      window.open('https://www.google.com/doodles/');
+      return;
     },
     showSearch() {
       setTimeout(() => {
-        this.showSearchBar = true
-      }, 3000)
+        this.showSearchBar = true;
+      }, 3000);
     },
   },
   computed: {
     ismobile() {
-      var width = window.innerWidth > 0 ? window.innerWidth : screen.width
+      var width = window.innerWidth > 0 ? window.innerWidth : screen.width;
       if (width > 966) {
-        return false
+        return false;
       } else {
-        return true
+        return true;
       }
     },
   },
   mounted() {
-    this.showSearch()
+    this.showSearch();
   },
-}
+};
 </script>
